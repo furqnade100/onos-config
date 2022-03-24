@@ -37,10 +37,11 @@ package main
 
 import (
 	"flag"
-	"github.com/onosproject/onos-config/pkg/modelregistry"
-	"github.com/onosproject/onos-lib-go/pkg/cluster"
 	"os"
 	"time"
+
+	"github.com/onosproject/onos-config/pkg/modelregistry"
+	"github.com/onosproject/onos-lib-go/pkg/cluster"
 
 	"github.com/atomix/atomix-go-client/pkg/atomix"
 	"github.com/onosproject/onos-config/pkg/manager"
@@ -77,7 +78,7 @@ func main() {
 	flag.Bool("debug", false, "enable debug logging")
 	flag.Parse()
 
-	log.Info("Starting onos-config")
+	log.Info("Furqan Starting onos-config")
 
 	opts, err := certs.HandleCertPaths(*caPath, *keyPath, *certPath, true)
 	if err != nil {
