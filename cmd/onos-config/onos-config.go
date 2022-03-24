@@ -36,12 +36,13 @@ See ../../docs/run.md for how to run the application.
 package main
 
 import (
-	"github.com/onosproject/onos-config/pkg/manager"
-	"github.com/onosproject/onos-lib-go/pkg/logging"
-	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/onosproject/onos-config/pkg/manager"
+	"github.com/onosproject/onos-lib-go/pkg/logging"
+	"github.com/spf13/cobra"
 )
 
 var log = logging.GetLogger("main")
@@ -80,7 +81,7 @@ func runRootCommand(cmd *cobra.Command, args []string) error {
 	topoEndpoint, _ := cmd.Flags().GetString("topoEndpoint")
 	pluginPorts, _ := cmd.Flags().GetUintSlice("plugin-port")
 
-	log.Infow("Starting onos-config",
+	log.Infow("Furqan Starting onos-config",
 		"CAPath", caPath,
 		"KeyPath", keyPath,
 		"CertPath", certPath,
