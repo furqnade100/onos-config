@@ -17,6 +17,11 @@ package gnmi
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
+	"github.com/golang/protobuf/proto"
+	"github.com/google/gnxi/utils/credentials"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
@@ -25,15 +30,40 @@ import (
 	"github.com/onosproject/onos-config/pkg/utils"
 	"github.com/onosproject/onos-config/pkg/utils/values"
 	"github.com/openconfig/gnmi/proto/gnmi"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"strings"
-	"time"
 )
 
 // Get implements gNMI Get
 func (s *Server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetResponse, error) {
 	notifications := make([]*gnmi.Notification, 0)
+
+	//Make direct get req to gnmi adapter
+	fmt.Println("GetRequest:\n", proto.MarshalTextString(req))
+
+	opts := credentials.ClientCredentials()
+	conn, err := grpc.Dial("gnmi-netconf-adapter:10161", opts...)
+	if err != nil {
+		fmt.Printf("Dialing to adapter:10161 failed: %v", err)
+		fmt.Println("Now trying at 11161")
+		conni, erri := grpc.Dial("gnmi-netconf-adapter:11161", opts...)
+		if erri != nil {
+			fmt.Printf("Dialing to adapter:11161 also failed: %v", err)
+		}
+		conn = conni
+	}
+	defer conn.Close()
+
+	cli := gnmi.NewGNMIClient(conn)
+
+	getResponse, err := cli.Get(ctx, req)
+	if err != nil {
+		fmt.Printf("Get failed: %v", err)
+		return nil, err
+	}
+	fmt.Println("GetResponse:\n", proto.MarshalTextString(getResponse))
+
 	groups := make([]string, 0)
 	if md := metautils.ExtractIncoming(ctx); md != nil && md.Get("name") != "" {
 		groups = append(groups, strings.Split(md.Get("groups"), ";")...)
