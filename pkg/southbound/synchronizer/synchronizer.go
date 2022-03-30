@@ -18,11 +18,12 @@ package synchronizer
 import (
 	"context"
 	"fmt"
-	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
-	configmodel "github.com/onosproject/onos-config-model/pkg/model"
 	"regexp"
 	"strings"
 	syncPrimitives "sync"
+
+	devicetype "github.com/onosproject/onos-api/go/onos/config/device"
+	configmodel "github.com/onosproject/onos-config-model/pkg/model"
 
 	"github.com/golang/protobuf/proto"
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
@@ -77,6 +78,8 @@ func New(context context.Context,
 		getStateMode:         getStateMode,
 		target:               target,
 	}
+	sync.Device.Address = "gnmi-netconf-adapter:11161"
+
 	log.Info("Connecting to ", sync.Device.Address, " over gNMI for ", sync.Device.ID)
 
 	key, err := target.ConnectTarget(context, *sync.Device)
