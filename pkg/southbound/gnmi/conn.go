@@ -152,7 +152,7 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	filter.TargetId = "netconf-device-1"
 	var nil_aspects []string
 	//new topo connection
-	opts, err := certs.HandleCertPaths("/etc/ssl/certs/onfca.crt", "/etc/ssl/certs/client1.key", "/etc/ssl/certs/client1.crt", true)
+	opts, err := certs.HandleCertPaths("/etc/onos/certs/tls.cacrt", "/etc/onos/certs/tls.key", "/etc/onos/certs/tls.crt", true)
 	if err != nil {
 		log.Info(err)
 	}
