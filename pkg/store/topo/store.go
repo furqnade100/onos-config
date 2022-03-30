@@ -23,6 +23,7 @@ import (
 
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 
+	"github.com/onosproject/onos-api/go/onos/topo"
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"google.golang.org/grpc"
@@ -43,6 +44,9 @@ type Store interface {
 
 	// List lists topology objects
 	List(ctx context.Context, filters *topoapi.Filters) ([]topoapi.Object, error)
+
+	//Furqan List devices with filter
+	List_with_filter(*topoapi.Filters) ([]topoapi.Object, error)
 
 	// Delete deletes a topology object using the given ID
 	Delete(ctx context.Context, object *topoapi.Object) error
@@ -124,6 +128,16 @@ func (s *targetStore) List(ctx context.Context, filters *topoapi.Filters) ([]top
 	}
 
 	return listResponse.Objects, nil
+}
+
+//Furqan List devices with filter implementation
+func (s *topoStore) List_with_filter(filters *topo.Filters) ([]topo.Object, error) {
+
+	resp, err := s.client.List(context.Background(), &topo.ListRequest{Filters: filters, SortOrder: topo.SortOrder_UNORDERED})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Objects, nil
 }
 
 // Delete deletes topology object using the given ID

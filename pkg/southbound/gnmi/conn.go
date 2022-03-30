@@ -34,6 +34,7 @@ import (
 
 	"crypto/tls"
 
+	mgr "github.com/onosproject/onos-config/pkg/manager"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	baseClient "github.com/openconfig/gnmi/client"
 )
@@ -128,6 +129,38 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	if err != nil {
 		return nil, errors.NewInvalid("topo entity %s must have 'onos.topo.TLSOptions' aspect to work with onos-config", target.ID)
 	}
+	//Furqan implement, get adapter associated to the device
+	filter := topoapi.RelationFilter{
+		RelationKind: "sessions",
+		TargetKind:   "",
+		Scope:        topoapi.RelationFilterScope_TARGET_ONLY,
+	}
+	filter.TargetId = "netconf-device-1"
+	var nil_aspects []string
+	adapters, err := mgr.TopoStore_client.List_with_filter(&topoapi.Filters{RelationFilter: &filter, WithAspects: nil_aspects})
+	if err != nil {
+		log.Info("Unable to retreive adapters from topo. Error: ", err)
+	} else {
+		for _, object := range adapters {
+			switch object.Type {
+			case topoapi.Object_ENTITY:
+				log.Info("Furqan: object is entity")
+
+				if object.Aspects != nil {
+					for aspectType, aspect := range object.Aspects {
+						log.Info("Aspect Type: ", aspectType, " Aspect Value: ", aspect.Value)
+					}
+				}
+
+			case topoapi.Object_RELATION:
+				log.Info("Furqan: object is relation")
+				r := object.GetRelation()
+				log.Info("Object ID: ", object.ID, " Kind ID: ", r.KindID, " src: ", r.SrcEntityID, "target: ", r.TgtEntityID)
+			}
+		}
+	}
+
+	//objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
 
 	configurable.Address = "gnmi-netconf-adapter:11161"
 

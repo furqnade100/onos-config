@@ -61,6 +61,7 @@ import (
 const OIDCServerURL = "OIDC_SERVER_URL"
 
 var log = logging.GetLogger("manager")
+var TopoStore_client topo.Store
 
 // Config is a manager configuration
 type Config struct {
@@ -269,7 +270,7 @@ func (m *Manager) Start() error {
 	if err != nil {
 		return err
 	}
-
+	TopoStore_client = topoStore
 	// Create new plugin registry
 	m.pluginRegistry = pluginregistry.NewPluginRegistry(m.Config.PluginPorts...)
 	m.pluginRegistry.Start()
