@@ -82,6 +82,10 @@ func (r *Reconciler) reconcileConnection(ctx context.Context, targetID topoapi.I
 	// if the target does not exist, but we have a connection in the list of current
 	// connections then the connection should be closed and removed from the list of connections, if an error occurs then it retires
 	target, err := r.topo.Get(ctx, targetID)
+	if target.GetEntity().KindID == "netconf-adapter" {
+		log.Info("Adapter found ID: ", target.GetEntity().KindID)
+		return false, nil
+	}
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			log.Warnf("Failed to reconcile connection for target '%s': %v", targetID, err)
@@ -103,16 +107,18 @@ func (r *Reconciler) reconcileConnection(ctx context.Context, targetID topoapi.I
 		}
 		return true, nil
 	}
+	if target.GetEntity().KindID != "netconf-adapter" {
 
-	// Opens a new connection to the target
-	conn, err := r.conns.Connect(ctx, target)
-	if err != nil {
-		if !errors.IsAlreadyExists(err) {
-			log.Warnf("Failed to open connection for target '%s', %v", targetID, err)
-			return false, err
+		// Opens a new connection to the target
+		conn, err := r.conns.Connect(ctx, target)
+		if err != nil {
+			if !errors.IsAlreadyExists(err) {
+				log.Warnf("Failed to open connection for target '%s', %v", targetID, err)
+				return false, err
+			}
+			return false, nil
 		}
-		return false, nil
+		log.Infof("Connection %s for target %s is established successfully", targetID, conn.ID())
 	}
-	log.Infof("Connection %s for target %s is established successfully", targetID, conn.ID())
 	return true, nil
 }

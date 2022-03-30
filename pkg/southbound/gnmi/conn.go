@@ -178,10 +178,10 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 					configurable.Address = cfg.Address
 				}
 
-			case topoapi.Object_RELATION:
-				log.Info("Furqan: object is relation")
-				r := object.GetRelation()
-				log.Info("Object ID: ", object.ID, " Kind ID: ", r.KindID, " src: ", r.SrcEntityID, "target: ", r.TgtEntityID)
+				// case topoapi.Object_RELATION:
+				// 	log.Info("Furqan: object is relation")
+				// 	r := object.GetRelation()
+				// 	log.Info("Object ID: ", object.ID, " Kind ID: ", r.KindID, " src: ", r.SrcEntityID, "target: ", r.TgtEntityID)
 			}
 		}
 	}
