@@ -129,6 +129,8 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 		return nil, errors.NewInvalid("topo entity %s must have 'onos.topo.TLSOptions' aspect to work with onos-config", target.ID)
 	}
 
+	configurable.Address = "gnmi-netconf-adapter:11161"
+
 	destination := &baseClient.Destination{
 		Addrs:   []string{configurable.Address},
 		Target:  string(target.ID),
