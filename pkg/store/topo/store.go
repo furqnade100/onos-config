@@ -131,7 +131,7 @@ func (s *targetStore) List(ctx context.Context, filters *topoapi.Filters) ([]top
 }
 
 //Furqan List devices with filter implementation
-func (s *topoStore) List_with_filter(filters *topo.Filters) ([]topo.Object, error) {
+func (s *targetStore) List_with_filter(filters *topo.Filters) ([]topo.Object, error) {
 
 	resp, err := s.client.List(context.Background(), &topo.ListRequest{Filters: filters, SortOrder: topo.SortOrder_UNORDERED})
 	if err != nil {

@@ -158,7 +158,9 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	}
 	// Create new topo store
 	topoStore, err := topo.NewStore("onos-topo:5150", opts...)
-
+	if err != nil {
+		log.Info(err)
+	}
 	adapters, err := topoStore.List_with_filter(&topoapi.Filters{RelationFilter: &filter, WithAspects: nil_aspects})
 	if err != nil {
 		log.Info("Unable to retreive adapters from topo. Error: ", err)
