@@ -16,10 +16,11 @@ package synchronizer
 
 import (
 	"context"
-	configmodel "github.com/onosproject/onos-config-model/pkg/model"
-	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"sync"
 	"time"
+
+	configmodel "github.com/onosproject/onos-config-model/pkg/model"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 
 	"github.com/cenkalti/backoff"
 
@@ -109,6 +110,11 @@ func (s *Session) open() error {
 
 // connect connects to a device using a gNMI session
 func (s *Session) connect() error {
+	log.Info("Session.go Kind ID: ", s.device.Object.GetEntity().KindID)
+	if s.device.Object.GetEntity().KindID == "netconf-adapter" {
+		log.Info("Adapter found ID: ", s.device.Object.GetEntity().KindID)
+		return nil
+	}
 	log.Infof("Connecting to device: %s:%s at %s", s.device.ID, s.device.Version, s.device.Address)
 	count := 0
 	b := backoff.NewExponentialBackOff()
