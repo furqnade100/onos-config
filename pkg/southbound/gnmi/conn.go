@@ -168,12 +168,14 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 		for _, object := range adapters {
 			switch object.Type {
 			case topoapi.Object_ENTITY:
-				log.Info("Furqan: object is entity")
-
-				if object.Aspects != nil {
-					for aspectType, aspect := range object.Aspects {
-						log.Info("Aspect Type: ", aspectType, " Aspect Value: ", aspect.Value)
-					}
+				log.Info("Furqan: object is entity. Kind ID: ", object.GetEntity().KindID)
+				cfg := &topoapi.Configurable{}
+				err = object.GetAspect(cfg)
+				if err != nil {
+					log.Info("couldnt get aspect for target")
+				} else {
+					log.Info("target address: ", cfg.Address)
+					configurable.Address = cfg.Address
 				}
 
 			case topoapi.Object_RELATION:
@@ -185,8 +187,6 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	}
 
 	//objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
-
-	configurable.Address = "gnmi-netconf-adapter:11161"
 
 	destination := &baseClient.Destination{
 		Addrs:   []string{configurable.Address},
