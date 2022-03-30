@@ -34,7 +34,7 @@ import (
 
 	"crypto/tls"
 
-	mgr "github.com/onosproject/onos-config/pkg/manager"
+	"github.com/onosproject/onos-config/pkg/store/topo"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	baseClient "github.com/openconfig/gnmi/client"
 )
@@ -105,6 +105,20 @@ func newConn(options ...func(conn *conn)) *conn {
 	return conn
 }
 
+// type manager interface {
+// 	SaveInstance()
+// }
+
+// type gnmi_pkg struct {
+// 	mgr manager
+// }
+
+// var mgr_inst gnmi_pkg
+
+// func New_Manager(m manager) {
+// 	mgr_inst.mgr = m
+// }
+
 func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	asset := &topoapi.Asset{}
 	err := target.GetAspect(asset)
@@ -137,7 +151,15 @@ func newDestination(target *topoapi.Object) (*baseClient.Destination, error) {
 	}
 	filter.TargetId = "netconf-device-1"
 	var nil_aspects []string
-	adapters, err := mgr.TopoStore_client.List_with_filter(&topoapi.Filters{RelationFilter: &filter, WithAspects: nil_aspects})
+	//new topo connection
+	opts, err := certs.HandleCertPaths("/etc/ssl/certs/onfca.crt", "/etc/ssl/certs/client1.key", "/etc/ssl/certs/client1.crt", true)
+	if err != nil {
+		log.Info(err)
+	}
+	// Create new topo store
+	topoStore, err := topo.NewStore("onos-topo:5150", opts...)
+
+	adapters, err := topoStore.List_with_filter(&topoapi.Filters{RelationFilter: &filter, WithAspects: nil_aspects})
 	if err != nil {
 		log.Info("Unable to retreive adapters from topo. Error: ", err)
 	} else {
