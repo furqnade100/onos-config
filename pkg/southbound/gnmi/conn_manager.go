@@ -76,7 +76,7 @@ func (m *connManager) connect(ctx context.Context, target *topoapi.Object) (Conn
 		log.Warnf("Failed to create a new target %s", err)
 		return nil, err
 	}
-	log.Infof("Connecting to gNMI target: %+v", destination)
+	log.Infof("Furqan Connecting to gNMI target: %+v", destination)
 	opts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(math.MaxInt32)),
